@@ -10,7 +10,6 @@
 
 require("dotenv").config();
 var express = require("express");
-var exphbs = require("express-handlebars");
 var db = require("./models");
 var app = express();
 var session = require("express-session");
@@ -18,6 +17,24 @@ var passport = require("passport");
 var Auth0Strategy = require("passport-auth0");
 var viewUser = require("./ServerServices/User");
 
+var jwt = require('express-jwt');
+var jwks = require('jwks-rsa');
+
+var jwtCheck = jwt({
+      secret: jwks.expressJwtSecret({
+          cache: true,
+          rateLimit: true,
+          jwksRequestsPerMinute: 5,
+          jwksUri: 'https://dev-2b-g4sx1.auth0.com/.well-known/jwks.json'
+    }),
+    audience: 'userService',
+    issuer: 'https://dev-2b-g4sx1.auth0.com/',
+    algorithms: ['RS256']
+});
+
+app.use(jwtCheck);
+
+/*
 //Setup for authentication
 var sess = {
   secret: "testsecret",
@@ -35,7 +52,7 @@ var startegy = new Auth0Strategy({
   return done(null, profile);
 });
 passport.use(startegy);
-
+*/
 var PORT = process.env.PORT || 8080;
 
 // Middleware
@@ -43,26 +60,18 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
 
-// Handlebars
-app.engine(
-  "handlebars",
-  exphbs({
-
-  })
-);
-app.set("view engine", "handlebars");
 
 // codes for cors..
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
   next();
 });
 
-passport.serializeUser(function (user, done) {
+/*passport.serializeUser(function (user, done) {
   done(null, user);
 });
 
@@ -75,11 +84,11 @@ app.use(session(sess));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(viewUser());
+*/
 
 // Routes
 require("./routes/authRoutes")(app);
 require("./routes/apiRoutes")(app);
-require("./routes/htmlRoutes")(app);
 
 var syncOptions = { force: false };
 

@@ -5,6 +5,8 @@ require("dotenv").config();
 var flights = require("../ServerServices/Services/FlightService")(process.env.AE_SECRET);
 
 
+
+
 module.exports = function (app) {
   // read the info at this path
 
@@ -23,74 +25,80 @@ module.exports = function (app) {
     })
   })
   // create
-  app.post("/matches", protected(), function (req, res) {
+  app.post("/users", protected(), function (req, res) {
+    db.User.create({
+      name: req.body.name,
+      city: req.body.city,
+      countryTwo: req.body.countryTwo,
+      cityTwo: req.body.cityTwo,
+      photo: req.body.photo,
+      age: req.body.age,
+      lang: req.body.lang,
+      secLang: req.body.secLang,
+      bio: req.body.bio,
+      email: req.body.email,
+      userName: req.body.username
+    }).then(function (userData) {
+      res.json(userData);
+    });
+
+  });
+
+  app.get("/user", protected(), function (req, res){
+      db.User.findOne({
+        where: { 
+          [Op.or]: [{
+            email: req.query.email
+          }]
+        }
+      }).then(function (user) {
+        res.json(user);
+      });
+
+  });
+
+
+  app.get("/matches", protected(), function (req, res) {
     let temp;
 
-    db.User.findAll({
-      where: {
-        [Op.or]: [{
-          city: req.body.cityTwo
-        },
-          //   {
-          //     countryTwo: req.body.countryTwo
-          //    },
-          //    {
-          //    cityTwo: req.body.cityTwo
-          //   }
-        ],
-      },
+    db.user.findOne({
+        where: {
+          [Op.or]: [{
+            email: req.query.email
+          }]
+        }
+      }).then(function (user) {
 
-    }).then(function (matchingUsers) {
-      temp = matchingUsers;
-      console.log('here ---->', temp.length)
-      // if there is a match, then do the for loop
-      if (temp.length > 0) {
-        for (var i = 0; i < temp.length; i++) {
-          if (temp[i].city == req.body.city) {
-            console.log('matching name:', temp[i].name, ': ', temp[i].city, 'city/country');
-            // matching city is working. logging out matching city
-          } else if (temp[i].countryTwo == req.body.countryTwo) {
-            console.log('Matching country: ', temp[i].countryTwo, 'matching name: ', temp[i].name);
-          } else if (temp[i].cityTwo == req.body.cityTwo) {
-            console.log('matching city to visit: ', temp[i].cityTwo + ' with: ', temp[i].name)
-          } else {
-            console.log('matches')
+        return db.User.findAll({
+          where: {
+            [Op.or]: [{
+                city: user.cityTwo
+              },
+            ],
+          },
+
+        });
+
+      }).then(function (matchingUsers) {
+        temp = matchingUsers;
+        console.log('here ---->', temp.length)
+        // if there is a match, then do the for loop
+        if (temp.length > 0) {
+          for (var i = 0; i < temp.length; i++) {
+            if (temp[i].city == req.body.city) {
+              console.log('matching name:', temp[i].name, ': ', temp[i].city, 'city/country');
+              // matching city is working. logging out matching city
+            } else if (temp[i].countryTwo == req.body.countryTwo) {
+              console.log('Matching country: ', temp[i].countryTwo, 'matching name: ', temp[i].name);
+            } else if (temp[i].cityTwo == req.body.cityTwo) {
+              console.log('matching city to visit: ', temp[i].cityTwo + ' with: ', temp[i].name)
+            } else {
+              console.log('matches')
+            }
           }
         }
-      }
-    }).then(function () {
-      console.log(req.body)
-      db.User.create({
-        name: req.body.name,
-        city: req.body.city,
-        countryTwo: req.body.countryTwo,
-        cityTwo: req.body.cityTwo,
-        photo: req.body.photo,
-        age: req.body.age,
-        lang: req.body.lang,
-        secLang: req.body.secLang,
-        bio: req.body.bio,
-        email: req.body.email,
-        userName: req.body.username
-      }).then(function () {
-        var destFlights
-        flights.MakeAPICall({ dest: req.body.cityTwo, home: req.body.city }).then(function (result) {
-          destFlights = result;
-          console.log("dest");
-          console.log(destFlights);
-          console.log(temp);
-          res.render("layouts/results.handlebars", {
-            destinationCity: req.body.cityTwo,
-            matches: temp,
-            flights: destFlights
-          })
-        });
-        //console.log('temp here-----', temp.length)
-
-        //   res.send(temp)
-      })
-    })
-  })
+        res.json(matchingUsers);
+      });
+  });
 
 }
-

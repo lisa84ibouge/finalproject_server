@@ -1,5 +1,5 @@
-export AUTH0_CLIENT_ID=MapdfI2wgkj6Xi1n46fE0l8eBaoBj8OZ
-export AUTH0_DOMAIN=jetsetmet.auth0.com
-export AUTH0_CLIENT_SECRET=qfBajathnHQhMFCawSmiHi0cuq7bGuQvjgzp2rczlXr4RyU8MgZxy0fHMp1qARMH
-export AUTH0_CALLBACK_URL=http://localhost:8080/callback
+export AUTH0_CLIENT_ID=7il3WVZfhImSnfVesnhQ90OoFuwcGKwF
+export AUTH0_DOMAIN=dev-2b-g4sx1.auth0.com
+export AUTH0_CLIENT_SECRET=oCFXrjS79HA-qStzc9ZlODo4vKSNjqAqGtd9j9JK7cwZBC8NDlgbKNOrFQ59GheG
+export AUTH0_CALLBACK_URL=http://localhost:3000/callback
 export AE_SECRET=87b37c-5803db

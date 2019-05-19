@@ -3,6 +3,7 @@ var util = require("util");
 var url = require("url");
 var querystring = require("querystring");
 
+
 module.exports = function (app) {
     app.get("/login", passport.authenticate("auth0", { scope: "openid email profile" }), (req, resp) => {
         resp.redirect("/index");

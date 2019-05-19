@@ -64,3 +64,6 @@ typings/
 package-lock.json
 #misc
 miscApi.js
+
+auth0.sh
+
