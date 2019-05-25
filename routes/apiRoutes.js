@@ -44,16 +44,16 @@ module.exports = function (app) {
 
   });
 
-  app.get("/user", protected(), function (req, res){
-      db.User.findOne({
-        where: { 
-          [Op.or]: [{
-            email: req.query.email
-          }]
-        }
-      }).then(function (user) {
-        res.json(user);
-      });
+  app.get("/user", protected(), function (req, res) {
+    db.User.findOne({
+      where: {
+        [Op.or]: [{
+          email: req.query.email
+        }]
+      }
+    }).then(function (user) {
+      res.json(user);
+    });
 
   });
 
@@ -61,44 +61,33 @@ module.exports = function (app) {
   app.get("/matches", protected(), function (req, res) {
     let temp;
 
-    db.User.findOne({
-        where: {
-          [Op.or]: [{
-            email: req.query.email
-          }]
-        }
-      }).then(function (user) {
 
-        return db.User.findAll({
-          where: {
-            [Op.or]: [{
-                city: user.cityTwo
-              },
-            ],
-          },
-
-        });
-
-      }).then(function (matchingUsers) {
-        temp = matchingUsers;
-        console.log('here ---->', temp.length)
-        // if there is a match, then do the for loop
-        if (temp.length > 0) {
-          for (var i = 0; i < temp.length; i++) {
-            if (temp[i].city == req.query.city) {
-              console.log('matching name:', temp[i].name, ': ', temp[i].city, 'city/country');
-              // matching city is working. logging out matching city
-            } else if (temp[i].countryTwo == req.query.countryTwo) {
-              console.log('Matching country: ', temp[i].countryTwo, 'matching name: ', temp[i].name);
-            } else if (temp[i].cityTwo == req.query.cityTwo) {
-              console.log('matching city to visit: ', temp[i].cityTwo + ' with: ', temp[i].name)
-            } else {
-              console.log('matches')
-            }
+    return db.User.findAll({
+      where: {
+        [Op.or]: [{
+          city: req.query.city
+        }, ],
+      },
+    }).then(function (matchingUsers) {
+      temp = matchingUsers;
+      console.log('here ---->', temp.length)
+      // if there is a match, then do the for loop
+      if (temp.length > 0) {
+        for (var i = 0; i < temp.length; i++) {
+          if (temp[i].city == req.query.city) {
+            console.log('matching name:', temp[i].name, ': ', temp[i].city, 'city/country');
+            // matching city is working. logging out matching city
+          } else if (temp[i].countryTwo == req.query.countryTwo) {
+            console.log('Matching country: ', temp[i].countryTwo, 'matching name: ', temp[i].name);
+          } else if (temp[i].cityTwo == req.query.cityTwo) {
+            console.log('matching city to visit: ', temp[i].cityTwo + ' with: ', temp[i].name)
+          } else {
+            console.log('matches')
           }
         }
-        res.json(matchingUsers);
-      });
+      }
+      res.json(matchingUsers);
+    });
   });
 
 }
