@@ -61,7 +61,7 @@ module.exports = function (app) {
   app.get("/matches", protected(), function (req, res) {
     let temp;
 
-    db.user.findOne({
+    db.User.findOne({
         where: {
           [Op.or]: [{
             email: req.query.email
@@ -85,12 +85,12 @@ module.exports = function (app) {
         // if there is a match, then do the for loop
         if (temp.length > 0) {
           for (var i = 0; i < temp.length; i++) {
-            if (temp[i].city == req.body.city) {
+            if (temp[i].city == req.query.city) {
               console.log('matching name:', temp[i].name, ': ', temp[i].city, 'city/country');
               // matching city is working. logging out matching city
-            } else if (temp[i].countryTwo == req.body.countryTwo) {
+            } else if (temp[i].countryTwo == req.query.countryTwo) {
               console.log('Matching country: ', temp[i].countryTwo, 'matching name: ', temp[i].name);
-            } else if (temp[i].cityTwo == req.body.cityTwo) {
+            } else if (temp[i].cityTwo == req.query.cityTwo) {
               console.log('matching city to visit: ', temp[i].cityTwo + ' with: ', temp[i].name)
             } else {
               console.log('matches')
