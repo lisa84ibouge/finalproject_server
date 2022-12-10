@@ -16,7 +16,7 @@
     "@google/maps": "^0.5.5",
     "axios": "^0.18.0",
     "dotenv": "^6.2.0",
-    "express": "^4.17.0",
+    "express": "^4.17.3",
     "express-jwks": "^2.0.0",
     "express-jwt": "^5.3.1",
     "express-session": "^1.16.1",
